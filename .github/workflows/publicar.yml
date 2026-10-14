@@ -1,0 +1,49 @@
+name: UNIT-X9 - Testar e publicar
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+jobs:
+  testar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validar jogo
+        run: |
+          python3 tests/smoke.py
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('index.html').read_text(encoding='utf-8')
+          js=s.split('<script>',1)[1].split('</script>',1)[0]
+          Path('/tmp/unit-x9.js').write_text(js,encoding='utf-8')
+          PY
+          node --check /tmp/unit-x9.js
+  publicar:
+    needs: testar
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - name: Montar site
+        run: |
+          mkdir public
+          cp index.html public/index.html
+          touch public/.nojekyll
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: public
+      - id: deployment
+        uses: actions/deploy-pages@v4
