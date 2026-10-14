@@ -10,6 +10,11 @@ checks={
  'movimentacao': 'function updatePlayer' in s,
  'loop de renderizacao': 'requestAnimationFrame(frame)' in s,
  'fase e chefes': all(x in s for x in ['carrier','boss','vanguard']),
+ 'animacao pela distancia': 'player.runDistance/5' in s,
+ 'salto responsivo': 'jumpBuffer' in s and 'coyote' in s,
+ 'agachamento funcional': "mode==='crouch'" in s and 'playerHurtbox()' in s,
+ 'pausa': 'function togglePause()' in s and 'id="pause"' in s,
+ 'coleta de energia': "sprite('medkit'" in s and 'pickups=' in s,
  'sem dependencias remotas': not re.search(r'<script[^>]+src=|<link[^>]+href=',s,re.I)
 }
 for label,ok in checks.items():
