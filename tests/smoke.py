@@ -6,7 +6,7 @@ checks={
  'canvas': '<canvas id="game"' in s,
  'botao START': 'id="start"' in s,
  'controles': all(f'id="{x}"' in s for x in ['left','right','down','jump','dash','fire']),
- 'sprites': 'unit_run' in s and 'sprite(' in s,
+ 'sprites': 'humanoid(' in s and 'sprite(' in s,
  'movimentacao': 'function updatePlayer' in s,
  'loop de renderizacao': 'requestAnimationFrame(frame)' in s,
  'fase e chefes': all(x in s for x in ['carrier','boss','vanguard']),
